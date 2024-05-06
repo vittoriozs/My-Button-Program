@@ -1,5 +1,6 @@
 package com.example.mybuttonprogram
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -8,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.mytest.R
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -18,11 +20,11 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        var leftBtn = findViewById<Button>(R.id.leftBtn)
-        var rightBtn = findViewById<Button>(R.id.rightBtn)
-        var totalScore = findViewById<TextView>(R.id.scoreTxt)
+        val leftBtn = findViewById<Button>(R.id.leftBtn)
+        val rightBtn = findViewById<Button>(R.id.rightBtn)
+        val totalScore = findViewById<TextView>(R.id.scoreTxt)
 
-        startRound(totalScore)
+        playGame(totalScore)
 
         leftBtn.setOnClickListener {
             checkAnswer(leftBtn.text.toString().toInt(), rightBtn.text.toString().toInt(), totalScore)
@@ -39,9 +41,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startRound(totalScore: TextView?) {
-        val leftVal = random_number()
-        val rightVal = random_number()
+    @SuppressLint("SetTextI18n")
+    private fun playGame(totalScore: TextView?) {
+        val leftVal = randomNumber()
+        val rightVal = randomNumber()
 
         findViewById<Button>(R.id.leftBtn).text = leftVal.toString()
         findViewById<Button>(R.id.rightBtn).text = rightVal.toString()
@@ -51,15 +54,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun random_number() :Int {
+    private fun randomNumber() :Int {
         return Random.nextInt(1, 99)
     }
 
-    private fun checkScore(score: Int, threshold: Int) {
-        if (score % threshold == 0 && score > 0)
-            Toast.makeText(applicationContext, "Congratulations! You have reached a score of $score", Toast.LENGTH_LONG).show()
-    }
-
+    @SuppressLint("SetTextI18n")
     private fun checkAnswer(selectedNumber: Int, otherNumber: Int, totalScore: TextView) {
         if (selectedNumber > otherNumber) {
             score++
@@ -69,12 +68,13 @@ class MainActivity : AppCompatActivity() {
             score = 0
         }
 
-        checkScore(score, 10)
-        checkScore(score, 20)
-        checkScore(score, 30)
-        checkScore(score, 40)
-        checkScore(score, 50)
-        startRound(totalScore)
+        for (threshold in 10 until Int.MAX_VALUE step 10) {
+            if (score % threshold == 0 && score > 0) {
+                Toast.makeText(applicationContext, "Congratulations! You have reached a score of $score", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        playGame(totalScore)
     }
 
 }
